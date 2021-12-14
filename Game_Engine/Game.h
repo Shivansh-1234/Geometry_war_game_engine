@@ -4,9 +4,11 @@
 
 #include "EntityManager.h"
 #include "Entity.h"
+#include <math.h>
 
 #define SCREENWIDTH 1280
 #define SCREENHEIGHT 720
+#define PI 3.14159265358979323846 
 
 struct PlayerProperties { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V; float S; };
 struct EnemyProperties  { int SR, CR, OR, OG, OB, OT, VMIN, VMAX, L, SI; float SMIN, SMAX; };
@@ -49,7 +51,10 @@ class Game
 	void initEntityProperties();
 	void resetPos(std::shared_ptr<sa::Entity> entity);
 	bool checkCollision(std::shared_ptr<sa::Entity> c1, std::shared_ptr<sa::Entity> c2);
-
+	inline double deg2rad(double deg)
+	{
+		return deg * PI / 180.;
+	}
 public:
 
 	Game(const std::string& config);

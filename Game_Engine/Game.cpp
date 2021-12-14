@@ -289,14 +289,22 @@ void Game::spawnEnemy()
 
 void Game::spawnSmallEnemies(std::shared_ptr<sa::Entity> entity)
 {
-
+	auto pointCount = entity->cShape->circle.getPointCount();
 	for (int i = 0; i < entity->cShape->circle.getPointCount(); i++)	
 	{
 		sf::Vector2f temp = entity->cShape->circle.getTransform().transformPoint(entity->cShape->circle.getPoint(i));	
-		sa::Vec2 randomSpeed = { -3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (3 - (-3)))) , -3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (3 - (-3)))) };
+		//sa::Vec2 randomSpeed = { -3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (3 - (-3)))) , -3 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (3 - (-3)))) };
+
+		sa::Vec2 velocityVector = entity->cTransform->speed;
+		float angle = deg2rad(360.f / pointCount);
+		sa::Vec2 rotatedVector(
+			(std::cosf(angle * (i + 1)) * velocityVector.x) - (std::sinf(angle * (i + 1)) * velocityVector.y), 
+			(std::sinf(angle * (i + 1)) * velocityVector.x) + (std::cosf(angle * (i + 1)) * velocityVector.y)
+							  );
+
 
 		auto se = m_entities.addEntity("smallEnemy");
-		se->cTransform = std::make_shared<sa::CTransform>(sa::Vec2(temp.x, temp.y), randomSpeed, 0.0f);
+		se->cTransform = std::make_shared<sa::CTransform>(sa::Vec2(temp.x, temp.y), rotatedVector, 0.0f);
 		se->cShape     = std::make_shared<sa::CShape>(entity->cShape->circle.getRadius() / 2.f, entity->cShape->circle.getPointCount(), entity->cShape->circle.getFillColor(), entity->cShape->circle.getOutlineColor(), 
 						 entity->cShape->circle.getOutlineThickness());
 		se->cCollision = std::make_shared<sa::CCollision>(entity->cShape->circle.getRadius());
